@@ -4,6 +4,11 @@ var cols = 100;
 var grid = new Array(rows);
 var tempGrid = new Array(rows);
 
+var playing = false;
+
+var timer;
+var reproductionTime = 100;
+
 function initGrids(){
     for (var i = 0; i < rows; i++){
         grid[i] = new Array(cols); // in each row of the grid, create a new array of columns
@@ -86,6 +91,34 @@ function updateView(){
             }
         }
     }
+}
+
+function setupControlButtons(){
+    var startButton = document.getElementById("start"); // get the start button
+    startButton.onclick = startButtonHandler; // when the start button is clicked, call the startButtonHandler function
+
+    var clearButton = document.getElementById("clear"); // get the clear button
+    clearButton.onclick = clearButtonHandler; // when the clear button is clicked, call the clearButtonHandler function
+
+    var randomButton = document.getElementById("random"); // get the random button
+    randomButton.onclick = randomButtonHandler; // when the random button is clicked, call the randomButtonHandler function
+}
+
+function randomButtonHandler(){
+    if (playing){
+        return; // if the game is playing, return
+    }
+    clearButtonHandler(); // clear the grid
+
+    for(var i = 0; i < rows; i++){
+        for(var j = 0; j < cols; j++){
+            var cellStatus = Math.round(math.random()); // generate a random number between 0 and 1
+        }
+    }
+}
+
+function clearButtonHandler(){
+   
 }
 
 window.onload = initGame; // when the window loads, call the initGame function

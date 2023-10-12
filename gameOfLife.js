@@ -118,7 +118,56 @@ function randomButtonHandler(){
 }
 
 function clearButtonHandler(){
-   
+    console.log("Clearing Game");
+    playing = false; // set playing to false
+    var startButton = document.getElementbyId("start"); // get the start button
+    startButton.innerHTML = "Start"; // set the text of the start button to "Start"
+    clearTimeout(timer); // clear the timer
+
+    var cellList = document.getElementsByClassName("live"); // get all the cells with the class of live
+    // convert the cellList to an array
+    var liveCells = [];
+    for(var i = 0; i < cellList.length; i++){
+            liveCells.push(cellList[i]); // add the cell to the array
+    }
+
+    // loop through the array of live cells and set the class of each cell to dead
+    for(var i = 0; i < liveCells.length; i++){
+            liveCells[i].setAttribute("class", "dead"); // set the class of the cell to dead
+    }
+
+    resetGrids; // reset the grids
+}
+
+function startButtonHandler(){
+    if (playing){
+        playing = false; // set playing to false
+        this.innerHTML = "Continue"; // set the text of the start button to "Continue"
+        clearTimeout(timer); // clear the timer
+    }
+    else{
+        playing = true;
+        this.innerHTML = "Pause";
+        play();
+    }
+}
+
+function play(){
+    computeNextGen(); // compute the next generation of cells
+    if(playing){
+        timer = setTimeout(play, reproductionTime); // set the timer to call the play function every reproductionTime milliseconds
+    }
+}
+
+function computeNextGen(){
+    for(var i = 0; i < rows; i++){
+        for(var j = 0; j < cols; j++){
+            applyRules(i, j);
+        }
+    }
+
+    copyAndResetGrid(); // copy the tempGrid to the grid
+    updateView(); // update the view
 }
 
 window.onload = initGame; // when the window loads, call the initGame function

@@ -113,6 +113,11 @@ function randomButtonHandler(){
     for(var i = 0; i < rows; i++){
         for(var j = 0; j < cols; j++){
             var cellStatus = Math.round(math.random()); // generate a random number between 0 and 1
+            if(cellStatus ==1){
+                var cell = document.getElementById(i +"_"+ j); // get the cell with the id of the row and column number
+                cell.setAttribute("class", "live"); // set the class of the cell to live
+                grid[i][j] = 1; // set the value of the cell in the grid to 1
+            }
         }
     }
 }
@@ -168,6 +173,39 @@ function computeNextGen(){
 
     copyAndResetGrid(); // copy the tempGrid to the grid
     updateView(); // update the view
+}
+
+/**
+    Rules: 
+    1. Any live cell with fewer than two live neighbors dies, as if caused by under-population.
+    2. Any live cell with two or three live neighbors lives on to the next generation. 
+    3. Any live cell with more than three live neighbors dies, as if by overpopulation
+    4. Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
+*/
+function applyRules(row, col){
+    var liveNeighbors = countNeighbors(row, col); // count the number of live neighbors
+    var cell = grid[row][col]; // get the value of the cell in the grid
+    
+    if(cell == 1){ // if the cell is alive
+        if(liveNeighbors < 2){
+            tempGrid[row][col] = 0; // set the value of the cell in the tempGrid to 0
+        }
+        else if(liveNeighbors == 2 || liveNeighbors == 3){
+            tempGrid[row][col] = 1; // set the value of the cell in the tempGrid to 1
+        }
+        else if(liveNeighbors > 3){
+            tempGrid[row][col] = 0; // set the value of the cell in the tempGrid to 0
+        }
+    }
+    else if(cell == 0){ // if the cell is dead
+        if(liveNeighbors == 3){
+            tempGrid[row][col] = 1; // set the value of the cell in the tempGrid to 1
+        }
+    }
+}
+
+function countNeighbors(row, col){
+    
 }
 
 window.onload = initGame; // when the window loads, call the initGame function

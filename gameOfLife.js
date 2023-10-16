@@ -68,18 +68,24 @@ function cellClickHandler(){
 
     var cellClass = this.getAttribute("class"); // get the class of the cell
 
-    if(cellClass.indexOf("live") > -1){ // if the cell is live (check if the string "live" is present)
-        // if the cell is live, set the class to dead
-        this.setAttribute("class", "dead"); // set the class of the cell to dead
-        grid[row][col] = 0; // set the value of the cell in the grid to 0
+    if(!playing){ // if the game is not playing
+        if(cellClass.indexOf("live") > -1){ // if the cell is live (check if the string "live" is present)
+            // if the cell is live, set the class to dead
+            this.setAttribute("class", "dead"); // set the class of the cell to dead
+            grid[row][col] = 0; // set the value of the cell in the grid to 0
+        }
+        else{
+            this.setAttribute("class", "live"); // set the class of the cell to live
+            grid[row][col] = 1; // set the value of the cell in the grid to 1
+        }
     }
-    else{
-        this.setAttribute("class", "live"); // set the class of the cell to live
-        grid[row][col] = 1; // set the value of the cell in the grid to 1
+    else if(playing){ 
+        this.onclick = null; // if the game is playing, disable the onclick event
     }
 }
 
 function updateView(){
+    console.log("updateView");
     for (var i = 0; i < rows; i++){
         for(var j = 0; j < cols; j++){
             var cell = document.getElementById(i + "_" + j); // get the cell with the id of the row and column number
@@ -112,7 +118,7 @@ function randomButtonHandler(){
 
     for(var i = 0; i < rows; i++){
         for(var j = 0; j < cols; j++){
-            var cellStatus = Math.round(math.random()); // generate a random number between 0 and 1
+            var cellStatus = Math.round(Math.random()); // generate a random number between 0 and 1
             if(cellStatus ==1){
                 var cell = document.getElementById(i +"_"+ j); // get the cell with the id of the row and column number
                 cell.setAttribute("class", "live"); // set the class of the cell to live
@@ -125,7 +131,7 @@ function randomButtonHandler(){
 function clearButtonHandler(){
     console.log("Clearing Game");
     playing = false; // set playing to false
-    var startButton = document.getElementbyId("start"); // get the start button
+    var startButton = document.getElementById("start"); // get the start button
     startButton.innerHTML = "Start"; // set the text of the start button to "Start"
     clearTimeout(timer); // clear the timer
 
@@ -149,6 +155,7 @@ function startButtonHandler(){
         playing = false; // set playing to false
         this.innerHTML = "Continue"; // set the text of the start button to "Continue"
         clearTimeout(timer); // clear the timer
+     
     }
     else{
         playing = true;
@@ -157,7 +164,9 @@ function startButtonHandler(){
     }
 }
 
+
 function play(){
+    console.log("Playing the game");
     computeNextGen(); // compute the next generation of cells
     if(playing){
         timer = setTimeout(play, reproductionTime); // set the timer to call the play function every reproductionTime milliseconds
@@ -183,6 +192,7 @@ function computeNextGen(){
     4. Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
 */
 function applyRules(row, col){
+
     var liveNeighbors = countNeighbors(row, col); // count the number of live neighbors
     var cell = grid[row][col]; // get the value of the cell in the grid
     
@@ -204,8 +214,67 @@ function applyRules(row, col){
     }
 }
 
+// count the number of live neighbors for a given cell
 function countNeighbors(row, col){
-    
+    var count = 0; 
+
+    // check the cell to the left
+    if(col - 1 >= 0){
+        if(grid[row][col-1] == 1){
+            count++;
+        }
+    }
+
+    // check the cell to the right
+    if (col + 1 < cols){
+        if(grid[row][col+1] == 1){
+            count++;
+        }
+    }
+
+    // check the cell above
+    if (row - 1 >= 0){
+        if(grid[row-1][col] == 1){
+            count++;
+        }
+    }
+
+    // check the cell below 
+    if (row + 1 < row){
+        if(grid[row+1][col] == 1){
+            count++;
+        }
+    }
+
+    // check the cell to the upper left
+    if (row - 1 >= 0 && col - 1 >= 0){
+        if(grid[row-1][col-1] == 1){
+            count++;
+        }
+    }
+
+    // check the cell to the upper right
+    if (row - 1 >= 0 && col + 1 < cols){
+        if(grid[row-1][col+1] == 1){
+            count++;
+        }
+    }
+
+    // check the cell to the lower left
+    if(row + 1 < rows && col - 1 >= 0){
+        if(grid[row+1][col-1] == 1){
+            count++;
+        }
+    }
+
+    // check the cell to the lower right
+    if(row + 1 < rows && col + 1 < cols){
+        if(grid[row+1][col+1] == 1){
+            count++;
+        }
+    }
+
+    return count;
 }
 
 window.onload = initGame; // when the window loads, call the initGame function

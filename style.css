@@ -5,6 +5,7 @@ body {
 
 #gridContainer {
     padding-bottom: 10px;
+    overflow: hidden;
 }
 
 table {
@@ -41,4 +42,8 @@ td.dead {
 td.live {
     background-color: #CC4774;
     border-radius: 10px;
+}
+
+td.invisible {
+    display: none;
 }

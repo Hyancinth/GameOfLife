@@ -1,5 +1,10 @@
-var rows = 38;
-var cols = 100;
+var playRows = 38; // number of rows in the play area
+var playCols = 100; // number of columns in the play area
+var invisRows = 2; // invisible buffer rows
+var invisCols = 2; // invisible buffer columns
+
+var rows = playRows + invisRows; 
+var cols = playCols + invisCols;
 
 var grid = new Array(rows);
 var tempGrid = new Array(rows);
@@ -51,10 +56,19 @@ function createTable(){
         var tr = document.createElement("tr"); // create a row in the table
         for(var j = 0; j < cols; j++){
             var cell = document.createElement("td"); // create a cell in the row
-            cell.setAttribute("id", i + "_" + j); // set the id of the cell to the row and column number
-            cell.setAttribute("class", "dead"); // set the class of the cell to dead, this is for style purpos
-            cell.onclick = cellClickHandler; // when the cell is clicked, call the cellClickHandler function
-            tr.appendChild(cell); // add the cell to the row
+    
+
+            if (i == 0 || i == rows - 1 || j  == 0 || j == cols - 1){
+                cell.setAttribute("id", i + "_" + j); // set the id of the cell to the row and column number
+                cell.setAttribute("class", "invisible"); // set the class of the cell to dead, this is for style purpos
+                tr.appendChild(cell); // add the cell to the row
+            }
+            else{
+                cell.setAttribute("id", i + "_" + j); // set the id of the cell to the row and column number
+                cell.setAttribute("class", "dead"); // set the class of the cell to dead, this is for style purpos
+                cell.onclick = cellClickHandler; // when the cell is clicked, call the cellClickHandler function
+                tr.appendChild(cell); // add the cell to the row
+            }
         }
         table.appendChild(tr); // add the row to the table
     }
@@ -86,8 +100,8 @@ function cellClickHandler(){
 
 function updateView(){
     console.log("updateView");
-    for (var i = 0; i < rows; i++){
-        for(var j = 0; j < cols; j++){
+    for (var i = 1; i < rows-1; i++){ // loop through the rows excluding the invisible buffer rows
+        for(var j = 1; j < cols-1; j++){ // loop through the columns excluding the invisible buffer columns
             var cell = document.getElementById(i + "_" + j); // get the cell with the id of the row and column number
             if(grid[i][j] == 0){ // if the value of the cell in the grid is 0
                 cell.setAttribute("class", "dead"); // set the class of the cell to dead
@@ -147,7 +161,7 @@ function clearButtonHandler(){
             liveCells[i].setAttribute("class", "dead"); // set the class of the cell to dead
     }
 
-    resetGrids; // reset the grids
+    resetGrids(); // reset the grids
 }
 
 function startButtonHandler(){
@@ -179,7 +193,7 @@ function computeNextGen(){
             applyRules(i, j);
         }
     }
-
+    
     copyAndResetGrid(); // copy the tempGrid to the grid
     updateView(); // update the view
 }
@@ -215,66 +229,94 @@ function applyRules(row, col){
 }
 
 // count the number of live neighbors for a given cell
-function countNeighbors(row, col){
-    var count = 0; 
+// function countNeighbors(row, col){
+//     var count = 0; 
 
-    // check the cell to the left
-    if(col - 1 >= 0){
-        if(grid[row][col-1] == 1){
-            count++;
-        }
-    }
+//     // check the cell to the left
+//     if(col - 1 >= 0){
+//         if(grid[row][col-1] == 1){
+//             count++;
+//         }
+//     }
 
-    // check the cell to the right
-    if (col + 1 < cols){
-        if(grid[row][col+1] == 1){
-            count++;
-        }
-    }
+//     // check the cell to the right
+//     if (col + 1 < cols){
+//         if(grid[row][col+1] == 1){
+//             count++;
+//         }
+//     }
 
-    // check the cell above
-    if (row - 1 >= 0){
-        if(grid[row-1][col] == 1){
-            count++;
-        }
-    }
+//     // check the cell above
+//     if (row - 1 >= 0){
+//         if(grid[row-1][col] == 1){
+//             count++;
+//         }
+//     }
 
-    // check the cell below 
-    if (row + 1 < row){
-        if(grid[row+1][col] == 1){
-            count++;
-        }
-    }
+//     // check the cell below 
+//     if (row + 1 < row){
+//         if(grid[row+1][col] == 1){
+//             count++;
+//         }
+//     }
 
-    // check the cell to the upper left
-    if (row - 1 >= 0 && col - 1 >= 0){
-        if(grid[row-1][col-1] == 1){
-            count++;
-        }
-    }
+//     // check the cell to the upper left
+//     if (row - 1 >= 0 && col - 1 >= 0){
+//         if(grid[row-1][col-1] == 1){
+//             count++;
+//         }
+//     }
 
-    // check the cell to the upper right
-    if (row - 1 >= 0 && col + 1 < cols){
-        if(grid[row-1][col+1] == 1){
-            count++;
-        }
-    }
+//     // check the cell to the upper right
+//     if (row - 1 >= 0 && col + 1 < cols){
+//         if(grid[row-1][col+1] == 1){
+//             count++;
+//         }
+//     }
 
-    // check the cell to the lower left
-    if(row + 1 < rows && col - 1 >= 0){
-        if(grid[row+1][col-1] == 1){
-            count++;
-        }
-    }
+//     // check the cell to the lower left
+//     if(row + 1 < rows && col - 1 >= 0){
+//         if(grid[row+1][col-1] == 1){
+//             count++;
+//         }
+//     }
 
-    // check the cell to the lower right
-    if(row + 1 < rows && col + 1 < cols){
-        if(grid[row+1][col+1] == 1){
-            count++;
+//     // check the cell to the lower right
+//     if(row + 1 < rows && col + 1 < cols){
+//         if(grid[row+1][col+1] == 1){
+//             count++;
+//         }
+//     }
+
+//     return count;
+// }
+
+function countNeighbors(row, col) {
+    var count = 0;
+
+    // Define the relative positions of neighbors
+    var neighbors = [
+        [-1, 0], [-1, -1], [-1, 1],
+        [0, -1],           [0, 1],
+        [1, 0], [1, -1], [1, 1]
+    ];
+
+    // Check each neighbor
+    for (var i = 0; i < neighbors.length; i++) {
+        var newRow = row + neighbors[i][0];
+        var newCol = col + neighbors[i][1];
+
+        // Check if the neighbor is within bounds and alive
+        if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols) {
+            // if (grid[newRow][newCol] == 1) {
+            //     count++;
+            // }
+            count += grid[newRow][newCol];
         }
     }
 
     return count;
 }
+
 
 window.onload = initGame; // when the window loads, call the initGame function

@@ -94,12 +94,12 @@ function cellClickHandler(){
         }
     }
     else if(playing){ 
-        this.onclick = null; // if the game is playing, disable the onclick event
+        return
     }
 }
 
 function updateView(){
-    console.log("updateView");
+    // console.log("updateView");
     for (var i = 1; i < rows-1; i++){ // loop through the rows excluding the invisible buffer rows
         for(var j = 1; j < cols-1; j++){ // loop through the columns excluding the invisible buffer columns
             var cell = document.getElementById(i + "_" + j); // get the cell with the id of the row and column number
@@ -130,8 +130,8 @@ function randomButtonHandler(){
     }
     clearButtonHandler(); // clear the grid
 
-    for(var i = 0; i < rows; i++){
-        for(var j = 0; j < cols; j++){
+    for(var i = 1; i < rows - 1; i++){
+        for(var j = 1; j < cols - 1; j++){
             var cellStatus = Math.round(Math.random()); // generate a random number between 0 and 1
             if(cellStatus ==1){
                 var cell = document.getElementById(i +"_"+ j); // get the cell with the id of the row and column number
@@ -178,9 +178,8 @@ function startButtonHandler(){
     }
 }
 
-
 function play(){
-    console.log("Playing the game");
+    // console.log("Playing the game");
     computeNextGen(); // compute the next generation of cells
     if(playing){
         timer = setTimeout(play, reproductionTime); // set the timer to call the play function every reproductionTime milliseconds
@@ -228,69 +227,6 @@ function applyRules(row, col){
     }
 }
 
-// count the number of live neighbors for a given cell
-// function countNeighbors(row, col){
-//     var count = 0; 
-
-//     // check the cell to the left
-//     if(col - 1 >= 0){
-//         if(grid[row][col-1] == 1){
-//             count++;
-//         }
-//     }
-
-//     // check the cell to the right
-//     if (col + 1 < cols){
-//         if(grid[row][col+1] == 1){
-//             count++;
-//         }
-//     }
-
-//     // check the cell above
-//     if (row - 1 >= 0){
-//         if(grid[row-1][col] == 1){
-//             count++;
-//         }
-//     }
-
-//     // check the cell below 
-//     if (row + 1 < row){
-//         if(grid[row+1][col] == 1){
-//             count++;
-//         }
-//     }
-
-//     // check the cell to the upper left
-//     if (row - 1 >= 0 && col - 1 >= 0){
-//         if(grid[row-1][col-1] == 1){
-//             count++;
-//         }
-//     }
-
-//     // check the cell to the upper right
-//     if (row - 1 >= 0 && col + 1 < cols){
-//         if(grid[row-1][col+1] == 1){
-//             count++;
-//         }
-//     }
-
-//     // check the cell to the lower left
-//     if(row + 1 < rows && col - 1 >= 0){
-//         if(grid[row+1][col-1] == 1){
-//             count++;
-//         }
-//     }
-
-//     // check the cell to the lower right
-//     if(row + 1 < rows && col + 1 < cols){
-//         if(grid[row+1][col+1] == 1){
-//             count++;
-//         }
-//     }
-
-//     return count;
-// }
-
 function countNeighbors(row, col) {
     var count = 0;
 
@@ -308,15 +244,13 @@ function countNeighbors(row, col) {
 
         // Check if the neighbor is within bounds and alive
         if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols) {
-            // if (grid[newRow][newCol] == 1) {
-            //     count++;
-            // }
-            count += grid[newRow][newCol];
+            if (grid[newRow][newCol] == 1) {
+                count++;
+            }
         }
     }
 
     return count;
 }
-
 
 window.onload = initGame; // when the window loads, call the initGame function
